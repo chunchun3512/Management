@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sec.cc.zte.mapper.CreateTableMapper">
+
+	<update  id="createUserTable" statementType="STATEMENT" parameterType="String">
+		CREATE TABLE ${tableName} (
+					id int(11)primary key auto_increment,
+					jobnum varchar(50),
+					name varchar(50),
+					sex varchar(50),
+					age int(11),
+					position varchar(50)
+					)								
+	</update>
+	<update  id="createRoleTable" statementType="STATEMENT" parameterType="String">
+		CREATE TABLE ${tableName} (
+					id int(11)primary key auto_increment,
+					position varchar(50),
+					permission varchar(50)
+					)								
+	</update>
+	<update  id="createMenuTable" statementType="STATEMENT" parameterType="String">
+		CREATE TABLE ${tableName} (
+					id int(11)primary key auto_increment,
+					mainMenu varchar(50),
+					subMenu varchar(50),
+					permission varchar(50)
+					)							
+	</update>
+</mapper>

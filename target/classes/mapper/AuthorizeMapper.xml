@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sec.cc.zte.mapper.AuthorizeMapper">
+ 	<!-- Result Map -->
+ 	<resultMap type="com.sec.cc.zte.entity.User" id="resultMappi">
+        <result property="uuid" column="id" />
+        <result property="jobnum" column="jobnum" /> 
+        <result property="username" column="username" />   
+        <result property="sex" column="sex" />
+        <result property="age" column="age" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+        <result property="creat" column="creat" />
+        <result property="isdel" column="isdel" />
+    </resultMap>
+    <resultMap type="com.sec.cc.zte.entity.Role" id="resultMapping">
+        <result property="uuid" column="id" />
+        <result property="roleNum" column="role_num" /> 
+        <result property="roleName" column="role_name" />   
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+        <result property="creat" column="creat" />
+        <result property="isdel" column="isdel" />
+    </resultMap>
+	<resultMap type="com.sec.cc.zte.entity.User2Role" id="resultMap">
+        <result property="id" column="id" />
+        <result property="userId" column="user_id" /> 
+        <result property="roleId" column="role_id" />   
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+        <result property="creat" column="creat" />
+        <result property="isdel" column="isdel" />
+    </resultMap>
+    <resultMap type="com.sec.cc.zte.entity.Role2Menu" id="resultMapp">
+        <result property="id" column="id" />
+        <result property="roleId" column="role_id" />
+        <result property="menuId" column="menu_id" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+        <result property="creat" column="creat" />
+        <result property="isdel" column="isdel" />
+    </resultMap>
+    
+  <!--  新增用户的用户到角色映射  -->
+	<select id="isExitUser" parameterType="com.sec.cc.zte.entity.AuthorizeUser2Role" resultMap="resultMappi" >
+		select * from 00260452user where jobnum= #{jobnum}
+	</select>
+	<select id="isUser2RoleExit" parameterType="com.sec.cc.zte.entity.AuthorizeUser2Role" resultMap="resultMap" >
+		select * from 00260452user_role where user_id=#{uuid} and role_id in 
+		<foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+	<insert id="saveUser" parameterType="com.sec.cc.zte.entity.AuthorizeUser2Role">
+		insert into 00260452user (id,jobnum,username,sex,age,pasword,create_time,update_time,creat,isdel) 
+		values(#{uuid},#{jobnum},#{username},#{sex},#{age},#{pasword},#{createTime},#{updateTime},#{creat},#{isdel})
+	</insert>
+	<insert id="uuidUser2Role" parameterType="com.sec.cc.zte.entity.AuthorizeUser2Role">
+		INSERT INTO 00260452user_role (user_id, role_id,create_time,update_time,creat,isdel) values
+		<foreach collection="ids" item="id" index="index" separator=",">
+			(#{uuid},#{id},#{createTime},#{updateTime},#{creat},#{isdel})
+		</foreach>
+	</insert>
+	<select id="retResult" parameterType="com.sec.cc.zte.entity.AuthorizeUser2Role" resultMap="resultMap" >
+		select * from 00260452user_role where user_id= #{uuid}
+	</select>
+	
+	
+	
+	<!-- 新增角色的角色到菜单映射 -->
+	<select id="isExitRole" parameterType="com.sec.cc.zte.entity.AuthorizeRoleToMenu" resultMap="resultMapping" >
+		select * from 00260452role where role_num= #{roleNum}
+	</select>
+	<insert id="saveRole" parameterType="com.sec.cc.zte.entity.AuthorizeRoleToMenu"  >
+		insert into 00260452role (id,role_num,role_name,create_time,update_time,creat,isdel) 
+		values(#{uuid},#{roleNum},#{roleName},#{createTime},#{updateTime},#{creat},#{isdel})
+	</insert>
+	<insert id="uuidrole2MenuAuth" parameterType="com.sec.cc.zte.entity.AuthorizeRoleToMenu"  >
+		INSERT INTO 00260452role_menu (role_id, menu_id,create_time,update_time,creat,isdel) values
+		<foreach collection="ids" item="id" index="index" separator=",">
+			(#{uuid},#{id},#{createTime},#{updateTime},#{creat},#{isdel})
+		</foreach>
+	</insert>
+	<select id="returResult" parameterType="com.sec.cc.zte.entity.AuthorizeRoleToMenu" resultMap="resultMapp" >
+		select * from 00260452role_menu where role_id= #{uuid}
+	</select>
+	
+	
+	<!-- 已有用户的用户到角色映射 -->
+	<select id="isUser2RoleExitSin" parameterType="com.sec.cc.zte.entity.User2Role" resultMap="resultMap" >
+		select * from 00260452user_role where user_id =#{userId} and role_id =#{roleId}
+	</select>
+	
+	 <insert id="user2RoleAuthorizeSin" parameterType="com.sec.cc.zte.entity.User2Role" >
+		INSERT INTO 00260452user_role (user_id, role_id,create_time,update_time,creat,isdel) values
+		(#{userId},#{roleId},#{createTime},#{updateTime},#{creat},#{isdel})
+	</insert>
+	<select id="retResultSin" parameterType="com.sec.cc.zte.entity.User2Role" resultMap="resultMap" >
+		select * from 00260452user_role where user_id =#{userId} and role_id =#{roleId}
+	</select>
+	
+	
+	<!-- 已有角色的角色到菜单映射 -->
+	<select id="isRole2MenuExitSin" parameterType="com.sec.cc.zte.entity.Role2Menu" resultMap="resultMapp" >
+		select * from 00260452role_menu where role_id =#{roleId} and menu_id =#{menuId}
+	</select>
+	
+	 <insert id="Role2MenuAuthorizeSin" parameterType="com.sec.cc.zte.entity.Role2Menu" >
+		INSERT INTO 00260452role_menu (role_id, menu_id,create_time,update_time,creat,isdel) values
+		(#{roleId},#{menuId},#{createTime},#{updateTime},#{creat},#{isdel})
+		
+	</insert>
+	<select id="retuResultSin" parameterType="com.sec.cc.zte.entity.Role2Menu" resultMap="resultMapp" >
+		select * from 00260452role_menu where role_id =#{roleId} and menu_id =#{menuId}
+	</select>
+	
+	
+	
+	
+	
+	<!-- INSERT INTO 00260452role_menu (role_id, menu_id,create_time,update_time,creat,isdel) 
+	     SELECT r.id,m.id,r.create_time,r.update_time,r.creat,r.isdel
+	     FROM 00260452role r,00260452menu m WHERE r.role_num =#{role_num}  AND m.id =#{id}  in 
+		<foreach collection ="ids" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach> 
+		 AND r.create_time =#{create_time} AND r.update_time =#{update_time} AND r.creat =#{creat} AND r.isdel =#{isdel} -->
+	
+	<!-- <insert id="user2RoleAuth" parameterType="com.sec.cc.zte.entity.AuthorizeUser2Role" >
+		INSERT INTO 00260452user_role (user_id, role_id,create_time,update_time,creat,isdel) SELECT u.id,r.id,u.create_time,u.update_time,u.creat,u.isdel FROM
+		00260452user u,00260452role r WHERE u.jobnum =#{jobnum}  AND r.id =#{id} in 
+		<foreach collection ="ids" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach> 
+		 AND u.create_time =#{create_time} AND u.update_time =#{update_time} AND u.creat =#{creat} AND u.isdel =#{isdel}
+	</insert> -->	
+</mapper>

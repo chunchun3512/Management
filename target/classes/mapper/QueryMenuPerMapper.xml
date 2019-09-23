@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sec.cc.zte.mapper.QueryMenuPerMapper">
+
+	<select id="verifiy" parameterType="com.sec.cc.zte.entity.AccountPassword" resultType ="com.sec.cc.zte.entity.User">
+		select * from 00260452user where jobnum = #{jobnum}	
+	</select>
+	
+	<select id="queryme" parameterType="com.sec.cc.zte.entity.AccountPassword" resultType ="com.sec.cc.zte.entity.Result">
+		SELECT
+			u.id AS Id,
+			u.jobnum AS jobNum,
+			u.username AS userName, 
+			r.role_num AS roleNum,
+			r.role_name AS roleName,
+			m.menu_name AS menuName,
+			m.url AS Url
+		FROM
+			00260452user u,
+			00260452user_role ur, 
+			00260452role r,
+			00260452role_menu rm,
+			00260452menu m
+		WHERE
+			u.jobnum =#{jobnum}
+  			AND u.id =ur.user_id
+			AND r.id = ur.role_id
+			AND r.id = rm.role_id
+			AND m.id = rm.menu_id
+	</select>
+	
+	<select id="queryMe" parameterType="String" resultType ="com.sec.cc.zte.entity.Result">
+		SELECT b.id,jobnum,name,sex,age,b.position,visitMenu,searchMenu,modefMenu,delMenu,b.permission FROM
+		(SELECT a.id,jobnum,name,sex,age,a.position,permission FROM 
+		(select * FROM user00260452 WHERE jobnum=#{jobnum}) AS a 
+		INNER JOIN role00260452 ON role00260452.position = (SELECT position FROM user00260452 WHERE jobnum=#{jobnum})) AS b 
+		INNER JOIN menu00260452 ON b.permission=menu00260452.permission
+	</select>
+	
+</mapper>

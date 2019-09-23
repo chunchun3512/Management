@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sec.cc.zte.mapper.CrudMapper">
+ 	<!-- Result Map -->
+    <resultMap type="com.sec.cc.zte.entity.User" id="resultMapping">
+        <result property="uuid" column="id" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+    <insert id="addUserforLimiteM" parameterType="com.sec.cc.zte.entity.User">
+		INSERT INTO 00260452user (id,jobnum,username,sex,age,pasword,create_time,update_time,creat,isdel) 
+		values(#{uuid},#{jobnum},#{username},#{sex},#{age},#{pasword},#{createTime},#{updateTime},#{creat},#{isdel})
+    </insert>
+    <!-- <select id="isExitUser" resultMap ="resultMapping" parameterType="com.sec.cc.zte.entity.User">
+    	SELECT * FROM 00260452user WHERE jobnum=#{jobnum} and id=#{uuid} and isdel="no"
+    </select> -->
+    <update id="updateUserforLimiteM" parameterType="com.sec.cc.zte.entity.User">
+		UPDATE 00260452user SET 
+		<if test="username != null and username != ''">username=#{username},</if>
+		<if test="sex != null and sex != ''">sex=#{sex},</if>
+		<if test="age != null and age != ''">age=#{age},</if>
+		<if test="pasword != null and pasword != ''">pasword=#{pasword},</if>
+		update_time=#{updateTime}
+		WHERE jobnum=#{jobnum} and isdel="no"
+    </update>
+    <select id="queryUserforPageM" resultMap ="resultMapping" parameterType="com.sec.cc.zte.entity.User">
+    	SELECT * FROM 00260452user WHERE 
+    	<if test='username != null'>
+    		username like concat('%',#{username},'%') and
+    	</if>
+    	<if test='jobnum != null'>
+    		jobnum like concat('%',#{jobnum},'%') and
+    	</if>
+    	<if test='createTime != null'>
+    		create_time &lt;= #{createTime} and
+    	</if>
+    	<if test='updateTime != null'>
+    		update_time >= #{updateTime} and
+    	</if>
+    	isdel="no"
+    </select>
+     <update id="deleteUserforLimiteM" parameterType="com.sec.cc.zte.entity.User">
+    	UPDATE 00260452user SET isdel="yes" WHERE jobnum=#{jobnum}
+    </update>
+    
+    
+    
+    
+    <!-- 多种输入的更新接口扩展 -->
+    <select id="isExitUserforMoreM" resultMap ="resultMapping" parameterType="com.sec.cc.zte.entity.User">
+    	SELECT * FROM 00260452user WHERE jobnum=#{jobnum} or id=#{uuid} and isdel="no"
+    </select>
+    <update id="updateUserforMoreM1" parameterType="com.sec.cc.zte.entity.User">
+		UPDATE 00260452user SET 
+		<if test='username != null'>username=#{username},</if>
+		<if test='sex != null'>sex=#{sex},</if>
+		<if test='age != null'>age=#{age},</if>
+		<if test='pasword != null'>pasword=#{pasword},</if>
+		update_time=#{updateTime}
+		WHERE id=#{uuid} and isdel="no"
+    </update>
+    <update id="updateUserforMoreM2" parameterType="com.sec.cc.zte.entity.User">
+		UPDATE 00260452user SET 
+		<if test='username != null'>username=#{username},</if>
+		<if test='sex != null'>sex=#{sex},</if>
+		<if test='age != null'>age=#{age},</if>
+		<if test='pasword != null'>pasword=#{pasword},</if>
+		update_time=#{updateTime}
+		WHERE jobnum=#{jobnum} and isdel="no"
+    </update>
+</mapper>
